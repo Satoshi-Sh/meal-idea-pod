@@ -9,7 +9,12 @@ const SubmissionForm = ({ setFoodItems }) => {
     const formData = new FormData(event.target);
     const foodItem = formData.get("food-item");
     const amount = formData.get("amount");
-    setFoodItems((prevItems) => [...prevItems, [foodItem, amount]]);
+    setFoodItems((prevItems) => {
+      const id = Date.now();
+      const updatedItems = [...prevItems, [id, foodItem, amount]];
+      // Sort by the foodItem name (case-insensitive)
+      return updatedItems.sort((a, b) => a[1].localeCompare(b[1]));
+    });
     event.target.reset();
   };
 
