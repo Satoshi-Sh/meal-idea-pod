@@ -31,6 +31,13 @@ const IngredientList = ({ foodItems, setFoodItems }) => {
     );
   };
 
+  const handleBlur = (id, field, value) => {
+    if (value.trim() === "") {
+      return; // Don't exit edit mode if the value is empty
+    }
+    setEditMode(null); // Exit edit mode if the field has a valid value
+  };
+
   const isEditing = (id, field) =>
     editMode && editMode.id === id && editMode.field === field;
 
@@ -47,11 +54,15 @@ const IngredientList = ({ foodItems, setFoodItems }) => {
                     <TextField
                       variant="standard"
                       value={name}
+                      error={!name}
+                      helperText={
+                        !name ? "Ingredient name cannot be empty" : ""
+                      }
                       onChange={(e) => updateItem(id, "name", e.target.value)}
-                      onBlur={() => setEditMode(null)} // Exit edit mode on blur
-                      onKeyDown={(ev) => {
-                        if (ev.key === "Enter") {
-                          setEditMode(null);
+                      onBlur={(e) => handleBlur(id, "name", e.target.value)} // Exit edit mode on blur
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleBlur(id, "name", e.target.value);
                         }
                       }}
                       autoFocus
@@ -90,13 +101,15 @@ const IngredientList = ({ foodItems, setFoodItems }) => {
                       <TextField
                         variant="standard"
                         value={amount}
+                        error={!amount}
+                        helperText={!amount ? "Amount cannot be empty" : ""}
                         onChange={(e) =>
                           updateItem(id, "amount", e.target.value)
                         }
-                        onBlur={() => setEditMode(null)} // Exit edit mode on blur
-                        onKeyDown={(ev) => {
-                          if (ev.key === "Enter") {
-                            setEditMode(null);
+                        onBlur={(e) => handleBlur(id, "amount", e.target.value)} // Exit edit mode on blur
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleBlur(id, "amount", e.target.value);
                           }
                         }}
                         autoFocus
