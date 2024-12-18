@@ -20,7 +20,7 @@ const Home = () => {
   return (
     <div>
       <div className="flex justify-center">
-        <h1 className="text-3xl italic font-thin m-3">Meal Idea Pod</h1>
+        <h1 className="text-3xl italic font-thin m-5">Meal Idea Pod</h1>
         <Restaurant className="my-auto" />
       </div>
       <SubmissionForm setFoodItems={setFoodItems} />

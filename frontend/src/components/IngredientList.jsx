@@ -43,7 +43,7 @@ const IngredientList = ({ foodItems, setFoodItems }) => {
 
   return (
     <div className="p-5">
-      <h2 className="text-3xl mb-4">Food Ingredients</h2>
+      <h2 className="text-3xl mt-8 mb-4">Food Ingredients</h2>
       <Grid2>
         {foodItems.map(([id, name, amount]) => (
           <Grid2 xs={12} sm={6} md={4} key={id}>
