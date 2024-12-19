@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Restaurant } from "@mui/icons-material";
 import { ToggleButton, ToggleButtonGroup, Button } from "@mui/material";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
+import MealCard from "../components/MealCard";
 
 const api_base_url =
   import.meta.env.VITE_API_BASE_URL != ""
@@ -68,7 +69,7 @@ const Suggestions = () => {
 
       if (response.ok) {
         const data = await response.json();
-
+        console.log(data);
         setMealIdeas(data.meal_plans);
       } else {
         console.error("Error fetching meal ideas:", response.status);
@@ -132,9 +133,14 @@ const Suggestions = () => {
           <div>
             <h2 className="text-3xl italic font-thin m-5">Meal Suggestions</h2>
             <ul>
-              {mealIdeas.map((idea, index) => (
+              {mealIdeas.map(({ name, ease_of_cooking, category }, index) => (
                 <li key={index}>
-                  {idea.name} {idea.ease_of_cooking} {idea.category}
+                  <MealCard
+                    name={name}
+                    easeOfCooking={ease_of_cooking}
+                    category={category}
+                    foodItems={foodItems}
+                  ></MealCard>
                 </li>
               ))}
             </ul>

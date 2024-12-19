@@ -10,3 +10,33 @@
 body {
   text-align: center;
 }
+
+.react-markdown {
+  text-align: left;
+  padding: 40px;
+}
+.react-markdown p {
+  text-align: left;
+}
+
+/* Remove list dots */
+.react-markdown ul {
+  text-align: left;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.react-markdown ol {
+  text-align: left;
+  margin: 20px;
+}
+
+.react-markdown li {
+  text-align: left;
+  margin: 5px;
+}
+
+.rect-markdown p {
+  font-size: large;
+  font-style: italic;
+}
