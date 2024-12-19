@@ -1,7 +1,14 @@
 from flask import Flask, jsonify, request
 from utils import get_meal_ideas, get_recipe  # Import your functions from another file or module
+from flask_cors import CORS
+import os 
+from dotenv import load_dotenv 
 
+load_dotenv()
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": frontend_url}})
+
 
 @app.route('/api/meal-ideas', methods=['POST'])
 def meal_ideas():
@@ -17,10 +24,11 @@ def meal_ideas():
         meal_ideas = get_meal_ideas(ingredients, preferences)
 
         # Return the meal ideas as JSON
-        return jsonify(meal_ideas), 200
+        return meal_ideas, 200
 
     except Exception as e:
         # If any error occurs, return an error message
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/recipe', methods=['POST'])
@@ -45,4 +53,4 @@ def recipe():
 
 if __name__ == '__main__':
     # Run the Flask app on localhost:5000
-    app.run(debug=True)
+    app.run(debug=True,port=5000)

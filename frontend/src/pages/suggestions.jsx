@@ -3,7 +3,11 @@ import { useState, useEffect } from "react";
 import { Restaurant } from "@mui/icons-material";
 import { ToggleButton, ToggleButtonGroup, Button } from "@mui/material";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+
+const api_base_url =
+  import.meta.env.VITE_API_BASE_URL != ""
+    ? import.meta.env.VITE_API_BASE_URL
+    : "http://localhost:5000";
 
 const Suggestions = () => {
   const preferences = [
@@ -39,16 +43,41 @@ const Suggestions = () => {
   ];
   const [selectedPreferences, setSelectedPreferences] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
+  const [mealIdeas, setMealIdeas] = useState([]);
   useEffect(() => {
     const storedItems = localStorage.getItem("foodItems");
     if (storedItems && storedItems != "undefined") {
       setFoodItems(JSON.parse(storedItems));
     }
   }, []);
+  const getIdeas = async () => {
+    // Prepare the ingredients list and preferences
+    const ingredients = foodItems.map((item) => [item[1], item[2]]);
 
-  const getIdeas = () => {
-    console.log(foodItems, selectedPreferences, API_KEY);
+    try {
+      const response = await fetch(`${api_base_url}/api/meal-ideas`, {
+        method: "POST", // Change to POST if you're sending data
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ingredients: ingredients,
+          preferences: selectedPreferences,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        setMealIdeas(data.meal_plans);
+      } else {
+        console.error("Error fetching meal ideas:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching meal ideas:", error);
+    }
   };
+
   const handleToggle = (event, newPreferences) => {
     setSelectedPreferences(newPreferences);
   };
@@ -83,14 +112,35 @@ const Suggestions = () => {
           ))}
         </ToggleButtonGroup>
       </div>
-      <Button
-        variant="outlined"
-        startIcon={<TipsAndUpdatesIcon />}
-        sx={{ margin: "20px" }}
-        onClick={getIdeas}
-      >
-        Get Ideas
-      </Button>
+      {foodItems.length > 0 && selectedPreferences.length > 0 ? (
+        <Button
+          variant="outlined"
+          startIcon={<TipsAndUpdatesIcon />}
+          sx={{ margin: "20px" }}
+          onClick={getIdeas}
+        >
+          Get Ideas
+        </Button>
+      ) : foodItems.length === 0 ? (
+        <p className="m-5">Please add items first...</p>
+      ) : (
+        <p className="m-5">Please choose preferences...</p>
+      )}
+
+      <div>
+        {mealIdeas.length > 0 && (
+          <div>
+            <h2 className="text-3xl italic font-thin m-5">Meal Suggestions</h2>
+            <ul>
+              {mealIdeas.map((idea, index) => (
+                <li key={index}>
+                  {idea.name} {idea.ease_of_cooking} {idea.category}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

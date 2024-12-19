@@ -11,9 +11,8 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 class MealIdea(BaseModel):
     name: str
-    ease_of_cooking: Literal["easy", "medium", "hard"]
-    cooking_time: int 
-
+    ease_of_cooking: Literal["Easy", "Medium", "Hard"]
+    category: str
 class MealIdeaList(BaseModel):
     meal_plans: list[MealIdea]
 
