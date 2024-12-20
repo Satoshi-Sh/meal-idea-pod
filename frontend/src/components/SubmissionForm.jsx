@@ -44,7 +44,7 @@ const SubmissionForm = ({ setFoodItems }) => {
       <div>
         <TextField
           required
-          id="standard-required"
+          id="food-item"
           label="Food Item"
           name="food-item"
           variant="standard"
@@ -53,7 +53,7 @@ const SubmissionForm = ({ setFoodItems }) => {
         />
         <TextField
           required
-          id="standard-required"
+          id="amount"
           name="amount"
           label="Amount (1pcs, 0.8kg)"
           variant="standard"
