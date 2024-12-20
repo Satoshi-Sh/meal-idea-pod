@@ -112,7 +112,6 @@ def get_ingredients(mimetype,encoded_image):
     ],
     response_format=IngredientList,
     )
-    print(completion)
     content = completion.choices[0].message.content
     print(content)
     return content
