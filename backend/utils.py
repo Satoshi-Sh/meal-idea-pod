@@ -22,10 +22,10 @@ def get_meal_ideas(ingredients,preferences):
         "preferences":preferences
     }
     completion = client.beta.chat.completions.parse(
-    model="gpt-4o-mini",
-    temperature=0.2,
+    model="gpt-4o",
+    temperature=0.6,
     messages=[
-        {"role": "system","content":"You will get ingedient list and preferences from the user. Please make some meal suggestion and also sort by cooking_time in ascending order."},
+        {"role": "system","content":"You will get ingedient list and preferences from the user. Please make some meal suggestion and also sort by cooking_time from easy to hard."},
         {"role": "user", "content": json.dumps(prompt)}
     ],
     response_format=MealIdeaList,
