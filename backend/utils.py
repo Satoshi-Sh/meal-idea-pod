@@ -16,6 +16,13 @@ class MealIdea(BaseModel):
 class MealIdeaList(BaseModel):
     meal_plans: list[MealIdea]
 
+class Ingredient(BaseModel):
+    name: str
+    amount: str
+class IngredientList(BaseModel):
+    ingredients: list[Ingredient] 
+
+
 def get_meal_ideas(ingredients,preferences):
     prompt = {
         "ingredients":ingredients,
@@ -42,7 +49,7 @@ def get_recipe(name,ingredients):
         "ingredients":ingredients,
     }
     completion = client.beta.chat.completions.parse(
-    model="gpt-4o-mini",
+    model="gpt-4o",
     temperature=0.2,
     
     messages=[
@@ -71,3 +78,43 @@ def get_recipe(name,ingredients):
     print(content)
     return content
 
+
+
+
+def get_ingredients(mimetype,encoded_image):
+    completion = client.beta.chat.completions.parse(
+    model="gpt-4o",
+    temperature=0.2,    
+    messages=[
+        {
+    "role": "system",
+    "content": """You will get an image of a recipt. 
+             1. Extract the text from the image. 
+             2. Give me the food ingredients and their amounts mentioned from the extracted text.
+             3. You can 1pcs if the amount is not mentioned. Also you can round up the amount (ie.1.29 to 1.3).
+    """
+},
+
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Please extract the ingredients and amounts from this receipt."
+                }
+                ,
+                {
+                    "type": "image_url",
+                    "image_url": {"url":f"data:{mimetype};base64,{encoded_image}"}
+                }
+            ]
+        }
+    ],
+    response_format=IngredientList,
+    )
+    print(completion)
+    content = completion.choices[0].message.content
+    print(content)
+    return content
+
+    
