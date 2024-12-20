@@ -14,3 +14,10 @@ This project is a simple implementation of a meal suggestion system from food li
 2. `npm install`
 3. `npm run dev`
 4. Open http://localhost:5173/
+
+## Run Backend
+
+1. `cd backend`
+2. Set up the .env file according to the .sample_env
+3. Install dependencies to your environment `pip install -r requirements.txt`
+4. `python app.py`
