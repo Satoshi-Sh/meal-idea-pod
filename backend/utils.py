@@ -25,7 +25,7 @@ def get_meal_ideas(ingredients,preferences):
     model="gpt-4o",
     temperature=0.6,
     messages=[
-        {"role": "system","content":"You will get ingedient list and preferences from the user. Please make some meal suggestion and also sort by cooking_time from easy to hard."},
+        {"role": "system","content":"You will get ingedient list and preferences from the user. Please make some meal suggestion and also sort by cooking_time from easy to hard. Make sure the menu is available with the ingredients provided."},
         {"role": "user", "content": json.dumps(prompt)}
     ],
     response_format=MealIdeaList,
