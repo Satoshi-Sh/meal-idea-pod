@@ -7,7 +7,7 @@ import {
   Button,
   Typography,
   Dialog,
-  Box,
+  CircularProgress,
   DialogContent,
   DialogActions,
 } from "@mui/material";
@@ -77,7 +77,11 @@ const MealCard = ({ name, easeOfCooking, category, foodItems }) => {
 
       <Dialog open={open} onClose={handleClose}>
         <DialogContent class="react-markdown">
-          <ReactMarkdown>{recipeMarkdown}</ReactMarkdown>
+          {recipeMarkdown ? (
+            <ReactMarkdown>{recipeMarkdown}</ReactMarkdown>
+          ) : (
+            <CircularProgress color="inherit" />
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>

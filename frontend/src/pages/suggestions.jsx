@@ -1,7 +1,12 @@
 // src/pages/About.jsx
 import { useState, useEffect } from "react";
 import { Restaurant } from "@mui/icons-material";
-import { ToggleButton, ToggleButtonGroup, Button } from "@mui/material";
+import {
+  ToggleButton,
+  ToggleButtonGroup,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import MealCard from "../components/MealCard";
 
@@ -45,6 +50,7 @@ const Suggestions = () => {
   const [selectedPreferences, setSelectedPreferences] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
   const [mealIdeas, setMealIdeas] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const storedItems = localStorage.getItem("foodItems");
     if (storedItems && storedItems != "undefined") {
@@ -54,6 +60,8 @@ const Suggestions = () => {
   const getIdeas = async () => {
     // Prepare the ingredients list and preferences
     const ingredients = foodItems.map((item) => [item[1], item[2]]);
+    setIsLoading(true);
+    setMealIdeas([]);
 
     try {
       const response = await fetch(`${api_base_url}/api/meal-ideas`, {
@@ -71,6 +79,7 @@ const Suggestions = () => {
         const data = await response.json();
         console.log(data);
         setMealIdeas(data.meal_plans);
+        setIsLoading(false);
       } else {
         console.error("Error fetching meal ideas:", response.status);
       }
@@ -113,7 +122,10 @@ const Suggestions = () => {
           ))}
         </ToggleButtonGroup>
       </div>
-      {foodItems.length > 0 && selectedPreferences.length > 0 ? (
+
+      {isLoading ? (
+        <CircularProgress sx={{ m: 5 }} />
+      ) : foodItems.length > 0 && selectedPreferences.length > 0 ? (
         <Button
           variant="outlined"
           startIcon={<TipsAndUpdatesIcon />}
