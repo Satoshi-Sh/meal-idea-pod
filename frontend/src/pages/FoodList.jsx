@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import IngredientList from "../components/IngredientList";
 import { Restaurant } from "@mui/icons-material";
 import SubmissionForm from "../components/SubmissionForm";
+import ImageUploader from "../components/imageUploader";
 const Home = () => {
   const [foodItems, setFoodItems] = useState([]);
   useEffect(() => {
@@ -24,6 +25,7 @@ const Home = () => {
         <Restaurant className="my-auto" />
       </div>
       <SubmissionForm setFoodItems={setFoodItems} />
+      <ImageUploader />
       <IngredientList foodItems={foodItems} setFoodItems={setFoodItems} />
     </div>
   );
