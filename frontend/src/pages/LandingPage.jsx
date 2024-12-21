@@ -11,7 +11,6 @@ import {
   CardContent,
   CardMedia,
   Box,
-  TextField,
 } from "@mui/material";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import ReceiptIcon from "@mui/icons-material/Receipt";
@@ -20,6 +19,8 @@ import PublicIcon from "@mui/icons-material/Public";
 import sushiImage from "../assets/japanese-dishes.webp";
 import pastaImage from "../assets/pasta.jpg";
 import burgerImage from "../assets/hamburger.webp";
+import demoGif from "../assets/landing_page.gif";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -33,6 +34,10 @@ const theme = createTheme({
 });
 
 function LandingPage() {
+  const navigate = useNavigate();
+  const sendToFoodList = () => {
+    navigate("/food-list");
+  };
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -47,9 +52,9 @@ function LandingPage() {
             >
               Meal Idea Pod
             </Typography>
-            <Button color="inherit">Features</Button>
-            <Button color="inherit">How It Works</Button>
-            <Button color="inherit">Get Started</Button>
+            <Button color="inherit" onClick={() => sendToFoodList()}>
+              Get Started
+            </Button>
           </Toolbar>
         </AppBar>
 
@@ -68,19 +73,34 @@ function LandingPage() {
                   variant="contained"
                   color="info"
                   size="large"
-                  sx={{ mr: 2 }}
+                  sx={{ m: 1 }}
+                  onClick={() => sendToFoodList()}
                 >
                   Get Started
                 </Button>
-                <Button variant="outlined" color="info" size="large">
+                <Button
+                  variant="outlined"
+                  color="info"
+                  size="large"
+                  sx={{ m: 1 }}
+                >
                   Learn More
                 </Button>
               </Grid2>
-              <Grid2 xs={12} md={6}>
+              <Grid2
+                xs={12}
+                md={6}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
                 <img
-                  src="/placeholder.svg"
+                  src={demoGif}
                   alt="Meal Idea Pod app"
-                  className="w-full rounded-lg shadow-lg"
+                  className="rounded-lg shadow-2xl max-w-md min-w-60"
                 />
               </Grid2>
             </Grid2>
@@ -150,16 +170,16 @@ function LandingPage() {
                 How It Works
               </Typography>
               <Grid2 container spacing={4} aligns="center">
-                <Grid2 xs={12} md={6}>
+                {/* <Grid2 xs={12} md={6}>
                   <img
                     src="/placeholder.svg"
                     alt="How Meal Idea Pod works"
                     className="w-full rounded-lg shadow-lg"
                   />
-                </Grid2>
+                </Grid2> */}
                 <Grid2 xs={12} md={6}>
                   <ol className="space-y-4">
-                    <li className="flex s-center space-x-4">
+                    <li className="flex flex-wrap justify-center text-center s-center space-x-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white">
                         1
                       </div>
@@ -169,7 +189,7 @@ function LandingPage() {
                         Track your meals by manual entry or receipt upload
                       </Typography>
                     </li>
-                    <li className="flex s-center space-x-4">
+                    <li className="flex flex-wrap justify-center s-center space-x-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white">
                         2
                       </div>
@@ -179,7 +199,7 @@ function LandingPage() {
                         Choose your preference and get meal ideas.
                       </Typography>
                     </li>
-                    <li className="flex s-center space-x-4">
+                    <li className="flex flex-wrap justify-center s-center space-x-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white">
                         3
                       </div>
@@ -239,11 +259,18 @@ function LandingPage() {
           </Container>
         </main>
 
-        <footer className="bg-gray-200 py-4">
+        <footer className="bg-gray-600 py-4 text-white">
           <Container>
-            <Grid2 container justifyContent="space-between" aligns="center">
-              <Grid2>
-                <Typography variant="body2">
+            <Grid2 container justifyContent="space-evenly" aligns="center">
+              <Grid2 aligns="center">
+                <Typography
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   © 2024 Meal Idea Pod. All rights reserved.
                 </Typography>
               </Grid2>

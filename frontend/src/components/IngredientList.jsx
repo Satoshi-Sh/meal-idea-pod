@@ -47,7 +47,7 @@ const IngredientList = ({ foodItems, setFoodItems }) => {
       <Grid2>
         {foodItems.map(([id, name, amount]) => (
           <Grid2 xs={12} sm={6} md={4} key={id}>
-            <Card variant="outlined">
+            <Card variant="outlined" sx={{ margin: "5px" }}>
               <CardHeader
                 title={
                   isEditing(id, "name") ? (
@@ -82,7 +82,7 @@ const IngredientList = ({ foodItems, setFoodItems }) => {
                   </IconButton>
                 }
               />
-              <CardContent>
+              <CardContent sx={{ padding: "0" }}>
                 <Box
                   sx={{
                     display: "flex",
