@@ -1,16 +1,17 @@
 import React, { useState, useRef } from "react";
-import { Button, IconButton, Snackbar } from "@mui/material";
+import { Button, IconButton, Snackbar, CircularProgress } from "@mui/material";
 import { PhotoCamera, Upload } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/HighlightOff";
-const ImageUploader = () => {
+import EditableItemList from "./EditableItemList";
+const ImageUploader = ({ setFoodItems }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const [showCamera, setShowCamera] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [capturedItems, setCapturedItems] = useState([]);
   const api_base_url =
     import.meta.env.VITE_API_BASE_URL != ""
       ? import.meta.env.VITE_API_BASE_URL
@@ -105,11 +106,24 @@ const ImageUploader = () => {
       }
 
       const data = await response.json();
-      console.log("Success:", data);
+      const id = Date.now();
+      const ingredientsArray = data.ingredients.map(
+        ({ name, amount }, index) => [id + index, name, amount]
+      );
+
+      if (ingredientsArray.length == 0) {
+        setError("No ingredients detected. Please try again.");
+        setTimeout(() => {
+          setError(null);
+        }, 3000);
+        setSelectedImage(null);
+        fileInputRef.current.value = "";
+        return;
+      }
+      setCapturedItems(ingredientsArray);
 
       // Handle successful response (e.g., show success message, redirect, etc.)
       setError(null);
-      // Reset the form if needed
       setSelectedImage(null);
       fileInputRef.current.value = "";
     } catch (err) {
@@ -135,104 +149,117 @@ const ImageUploader = () => {
     setShowCamera(false);
   };
   return (
-    <div className="flex flex-col items-center space-y-4 m-6 rounded-lg">
-      <input
-        type="file"
-        accept="image/jpeg, image/png, image/jpg"
-        onChange={handleFileChange}
-        ref={fileInputRef}
-        className="hidden"
-      />
-      {!selectedImage && !showCamera ? (
-        <>
-          <h4 className="italic font-thin">Upload a receipt image</h4>
-          <div className="flex space-x-4">
-            <Button
-              variant="contained"
-              startIcon={<Upload />}
-              onClick={() => fileInputRef.current.click()}
-              className="bg-blue-500 hover:bg-blue-600"
-            >
-              Select Image
-            </Button>
-            <IconButton
-              color="primary"
-              aria-label="capture picture"
-              onClick={handleCameraCapture}
-              className="bg-green-500 hover:bg-green-600 text-white"
-            >
-              <PhotoCamera />
-            </IconButton>
-          </div>
-        </>
-      ) : null}
+    <>
+      {capturedItems.length > 0 ? (
+        <EditableItemList
+          initialItems={capturedItems}
+          setFoodItems={setFoodItems}
+        />
+      ) : (
+        <div className="flex flex-col items-center space-y-4 m-6 rounded-lg">
+          <input
+            type="file"
+            accept="image/jpeg, image/png, image/jpg"
+            onChange={handleFileChange}
+            ref={fileInputRef}
+            className="hidden"
+          />
+          {!selectedImage && !showCamera ? (
+            <>
+              <h4 className="italic font-thin">Upload a receipt image</h4>
+              <div className="flex space-x-4">
+                <Button
+                  variant="outlined"
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  Select Image
+                </Button>
+                <IconButton
+                  color="primary"
+                  aria-label="capture picture"
+                  onClick={handleCameraCapture}
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                >
+                  <PhotoCamera />
+                </IconButton>
+              </div>
+            </>
+          ) : null}
 
-      {showCamera && (
-        <div className="mt-4">
-          <div className="w-80">
-            <video
-              ref={videoRef}
-              autoPlay
-              className="w-full h-96 mb-2 rounded-lg object-cover"
-            />
-          </div>
-          <div>
-            <Button
-              variant="contained"
-              onClick={captureImage}
-              className="bg-red-500 hover:bg-red-600"
-            >
-              Capture
-            </Button>
-            <IconButton onClick={stopCamera} color="error">
-              <DeleteIcon />
-            </IconButton>
-          </div>
+          {showCamera && (
+            <div className="mt-4">
+              <div className="w-80">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  className="w-full h-96 mb-2 rounded-lg object-cover"
+                />
+              </div>
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={captureImage}
+                  className="bg-red-500 hover:bg-red-600"
+                >
+                  Capture
+                </Button>
+                <IconButton onClick={stopCamera} color="error">
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+            </div>
+          )}
+          {selectedImage && (
+            <>
+              <div className="mt-4 h-96 w-80">
+                <img
+                  src={selectedImage}
+                  alt="Selected"
+                  className="w-full h-full object-cover rounded-lg shadow-lg"
+                />
+              </div>
+              <div className="flex gap-3">
+                {isSubmitting ? (
+                  <CircularProgress sx={{ m: 5 }} />
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                      startIcon={<AddIcon />}
+                    >
+                      Submit
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => {
+                        setSelectedImage(null);
+                        fileInputRef.current.value = "";
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+          <Snackbar
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            open={!!error}
+            autoHideDuration={6000}
+            onClose={handleCloseError}
+            message={error}
+          />
         </div>
       )}
-      {selectedImage && (
-        <>
-          <div className="mt-4 h-96 w-80">
-            <img
-              src={selectedImage}
-              alt="Selected"
-              className="w-full h-full object-cover rounded-lg shadow-lg"
-            />
-          </div>
-          <div className="flex gap-3">
-            <Button
-              variant="outlined"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              startIcon={<AddIcon />}
-            >
-              Submit
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={() => {
-                setSelectedImage(null);
-                fileInputRef.current.value = "";
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
-        </>
-      )}
-      <Snackbar
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={handleCloseError}
-        message={error}
-      />
-    </div>
+    </>
   );
 };
 

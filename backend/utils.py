@@ -91,7 +91,7 @@ def get_ingredients(mimetype,encoded_image):
     "content": """You will get an image of a recipt. 
              1. Extract the text from the image. 
              2. Give me the food ingredients and their amounts mentioned from the extracted text.
-             3. You can 1pcs if the amount is not mentioned. Also you can round up the amount (ie.1.29 to 1.3).
+             3. You can guess amount like(pcs,bottol,and so on) if the amount is not mentioned. Also you can round up the amount.
     """
 },
 

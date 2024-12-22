@@ -13,7 +13,6 @@ import { useState } from "react";
 
 const IngredientList = ({ foodItems, setFoodItems }) => {
   const [editMode, setEditMode] = useState(null);
-
   const removeItem = (id) => {
     setFoodItems(foodItems.filter((item) => item[0] !== id));
   };

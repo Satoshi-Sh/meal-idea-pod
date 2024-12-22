@@ -25,7 +25,7 @@ const Home = () => {
         <Restaurant className="my-auto" />
       </div>
       <SubmissionForm setFoodItems={setFoodItems} />
-      <ImageUploader />
+      <ImageUploader setFoodItems={setFoodItems} />
       <IngredientList foodItems={foodItems} setFoodItems={setFoodItems} />
     </div>
   );
