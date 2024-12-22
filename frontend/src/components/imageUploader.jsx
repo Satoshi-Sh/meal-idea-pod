@@ -9,6 +9,12 @@ const ImageUploader = () => {
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const api_base_url =
+    import.meta.env.VITE_API_BASE_URL != ""
+      ? import.meta.env.VITE_API_BASE_URL
+      : "http://localhost:5000";
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -50,8 +56,9 @@ const ImageUploader = () => {
   const captureImage = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth || 640; // Default fallback
-      canvas.height = videoRef.current.videoHeight || 480; // Default fallback
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+
       const context = canvas.getContext("2d");
       if (context) {
         context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
@@ -62,6 +69,54 @@ const ImageUploader = () => {
       setShowCamera(false);
     } else {
       setError("Camera stream not available. Please try again.");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedImage) {
+      setError("Please select or capture an image first");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Create FormData and append the image
+      const formData = new FormData();
+      if (fileInputRef.current.files.length > 0) {
+        // For file upload, use original file with its extension
+        formData.append("file", fileInputRef.current.files[0]);
+      } else {
+        // For camera capture, detect format from base64
+        const format = selectedImage.split(";")[0].split("/")[1];
+        const base64Response = await fetch(selectedImage);
+        const blob = await base64Response.blob();
+        formData.append("file", blob, `image.${format}`);
+      }
+
+      // Send to Flask endpoint
+      const response = await fetch(`${api_base_url}/api/get-ingredients`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+
+      // Handle successful response (e.g., show success message, redirect, etc.)
+      setError(null);
+      // Reset the form if needed
+      setSelectedImage(null);
+      fileInputRef.current.value = "";
+    } catch (err) {
+      console.error("Error:", err);
+      setError(`Failed to submit image: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -88,58 +143,84 @@ const ImageUploader = () => {
         ref={fileInputRef}
         className="hidden"
       />
-      <div className="flex space-x-4">
-        <Button
-          variant="contained"
-          startIcon={<Upload />}
-          onClick={() => fileInputRef.current.click()}
-          className="bg-blue-500 hover:bg-blue-600"
-        >
-          Select Image
-        </Button>
-        <IconButton
-          color="primary"
-          aria-label="capture picture"
-          onClick={handleCameraCapture}
-          className="bg-green-500 hover:bg-green-600 text-white"
-        >
-          <PhotoCamera />
-        </IconButton>
-      </div>
+      {!selectedImage && !showCamera ? (
+        <>
+          <h4 className="italic font-thin">Upload a receipt image</h4>
+          <div className="flex space-x-4">
+            <Button
+              variant="contained"
+              startIcon={<Upload />}
+              onClick={() => fileInputRef.current.click()}
+              className="bg-blue-500 hover:bg-blue-600"
+            >
+              Select Image
+            </Button>
+            <IconButton
+              color="primary"
+              aria-label="capture picture"
+              onClick={handleCameraCapture}
+              className="bg-green-500 hover:bg-green-600 text-white"
+            >
+              <PhotoCamera />
+            </IconButton>
+          </div>
+        </>
+      ) : null}
+
       {showCamera && (
         <div className="mt-4">
-          <video ref={videoRef} autoPlay className="mb-2 rounded-lg" />
-          <Button
-            variant="contained"
-            onClick={captureImage}
-            className="bg-red-500 hover:bg-red-600"
-          >
-            Capture
-          </Button>
-          <IconButton onClick={() => setShowCamera(false)} color="error">
-            <DeleteIcon />
-          </IconButton>
+          <div className="w-80">
+            <video
+              ref={videoRef}
+              autoPlay
+              className="w-full h-96 mb-2 rounded-lg object-cover"
+            />
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              onClick={captureImage}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Capture
+            </Button>
+            <IconButton onClick={stopCamera} color="error">
+              <DeleteIcon />
+            </IconButton>
+          </div>
         </div>
       )}
       {selectedImage && (
-        <div className="mt-4">
-          <img
-            src={selectedImage}
-            alt="Selected"
-            className="max-w-full h-auto rounded-lg shadow-lg"
-          />
-          <Button variant="outlined" endIcon={<AddIcon />}>
-            Submit
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            endIcon={<AddIcon />}
-            onClick={stopCamera}
-          >
-            Cancel
-          </Button>
-        </div>
+        <>
+          <div className="mt-4 h-96 w-80">
+            <img
+              src={selectedImage}
+              alt="Selected"
+              className="w-full h-full object-cover rounded-lg shadow-lg"
+            />
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="outlined"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              startIcon={<AddIcon />}
+            >
+              Submit
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={() => {
+                setSelectedImage(null);
+                fileInputRef.current.value = "";
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </>
       )}
       <Snackbar
         anchorOrigin={{
