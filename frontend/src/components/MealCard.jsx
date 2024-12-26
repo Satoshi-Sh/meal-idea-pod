@@ -37,7 +37,6 @@ const MealCard = ({ name, easeOfCooking, category, foodItems }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.recipe);
         setRecipeMarkdown(data.recipe);
       } else {
         console.error("Error fetching recipe:", response.status);
@@ -76,7 +75,7 @@ const MealCard = ({ name, easeOfCooking, category, foodItems }) => {
       </CardActions>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogContent class="react-markdown">
+        <DialogContent className="react-markdown">
           {recipeMarkdown ? (
             <ReactMarkdown>{recipeMarkdown}</ReactMarkdown>
           ) : (
