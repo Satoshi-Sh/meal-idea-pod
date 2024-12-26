@@ -12,7 +12,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 
-const EditableItemList = ({ setFoodItems, initialItems }) => {
+const EditableItemList = ({ setFoodItems, initialItems, setCapturedItems }) => {
   const [items, setItems] = useState(initialItems);
   const [editingId, setEditingId] = useState(null);
 
@@ -50,61 +50,88 @@ const EditableItemList = ({ setFoodItems, initialItems }) => {
       return updatedItems.sort((a, b) => a[1].localeCompare(b[1]));
     });
     setItems([]);
+    setCapturedItems([]);
   };
-  if (items.lengh === 0) return null;
+
+  const handleCancel = () => {
+    setItems([]);
+    setCapturedItems([]);
+  };
+
   return (
     <>
-      <List>
-        {items.map(([id, name, amount]) => (
-          <ListItem key={id} divider>
-            {editingId === id ? (
-              <>
-                <TextField
-                  value={name}
-                  onChange={(e) => handleChange(id, "name", e.target.value)}
-                  variant="standard"
-                  sx={{ mr: 2 }}
-                />
-                <TextField
-                  value={amount}
-                  onChange={(e) => handleChange(id, "amount", e.target.value)}
-                  variant="standard"
-                  sx={{ mr: 2 }}
-                />
-                <IconButton
-                  edge="end"
-                  onClick={() => handleSave(id)}
-                  aria-label="save"
-                >
-                  <SaveIcon />
-                </IconButton>
-              </>
-            ) : (
-              <>
-                <ListItemText
-                  primary={name}
-                  secondary={amount}
-                  sx={{ flexGrow: 1, mr: 2 }}
-                />
-                <Box>
-                  <IconButton onClick={() => handleEdit(id)} aria-label="edit">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleDelete(id)}
-                    aria-label="delete"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              </>
-            )}
-          </ListItem>
-        ))}
-      </List>
-      <Button variant="outlined" sx={{ mt: 3 }} onClick={handleAddAll}>
-        Add All
-      </Button>
+      {items.length > 0 ? (
+        <>
+          <List>
+            {items.map(([id, name, amount]) => (
+              <ListItem key={id} divider>
+                {editingId === id ? (
+                  <>
+                    <TextField
+                      value={name}
+                      onChange={(e) => handleChange(id, "name", e.target.value)}
+                      variant="standard"
+                      sx={{ mr: 2 }}
+                    />
+                    <TextField
+                      value={amount}
+                      onChange={(e) =>
+                        handleChange(id, "amount", e.target.value)
+                      }
+                      variant="standard"
+                      sx={{ mr: 2 }}
+                    />
+                    <IconButton
+                      edge="end"
+                      onClick={() => handleSave(id)}
+                      aria-label="save"
+                    >
+                      <SaveIcon />
+                    </IconButton>
+                  </>
+                ) : (
+                  <>
+                    <ListItemText
+                      primary={name}
+                      secondary={amount}
+                      sx={{ flexGrow: 1, mr: 2 }}
+                    />
+                    <Box>
+                      <IconButton
+                        onClick={() => handleEdit(id)}
+                        aria-label="edit"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleDelete(id)}
+                        aria-label="delete"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </>
+                )}
+              </ListItem>
+            ))}
+          </List>
+          <Box
+            sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}
+          >
+            <Button variant="outlined" onClick={handleAddAll}>
+              Add All
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </>
+      ) : null}
     </>
   );
 };

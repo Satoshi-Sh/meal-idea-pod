@@ -154,6 +154,7 @@ const ImageUploader = ({ setFoodItems }) => {
         <EditableItemList
           initialItems={capturedItems}
           setFoodItems={setFoodItems}
+          setCapturedItems={setCapturedItems}
         />
       ) : (
         <div className="flex flex-col items-center space-y-4 m-6 rounded-lg">
