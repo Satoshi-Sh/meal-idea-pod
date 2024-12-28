@@ -12,6 +12,7 @@ const ImageUploader = ({ setFoodItems }) => {
   const [showCamera, setShowCamera] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [capturedItems, setCapturedItems] = useState([]);
+  const [open, setOpen] = useState(false);
   const api_base_url =
     import.meta.env.VITE_API_BASE_URL != ""
       ? import.meta.env.VITE_API_BASE_URL
@@ -121,6 +122,7 @@ const ImageUploader = ({ setFoodItems }) => {
         return;
       }
       setCapturedItems(ingredientsArray);
+      setOpen(true);
 
       // Handle successful response (e.g., show success message, redirect, etc.)
       setError(null);
@@ -136,6 +138,9 @@ const ImageUploader = ({ setFoodItems }) => {
 
   const handleCloseError = () => {
     setError(null);
+  };
+  const closeMessage = () => {
+    setOpen(false);
   };
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
@@ -257,6 +262,22 @@ const ImageUploader = ({ setFoodItems }) => {
             autoHideDuration={6000}
             onClose={handleCloseError}
             message={error}
+          />
+          <Snackbar
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            open={open}
+            autoHideDuration={1500}
+            onClose={closeMessage}
+            message="The items have been added"
+            sx={{
+              "& .MuiSnackbarContent-root": {
+                backgroundColor: "green", // Set your desired background color
+                color: "white", // Adjust text color if needed
+              },
+            }}
           />
         </div>
       )}
