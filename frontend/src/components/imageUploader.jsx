@@ -28,23 +28,45 @@ const ImageUploader = ({ setFoodItems }) => {
       reader.readAsDataURL(file);
     }
   };
+
+  const initializeCamera = async (stream) => {
+    setShowCamera(true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+      setError(null);
+    } else {
+      throw new Error("Camera element not available. Please try again.");
+    }
+  };
+
   const handleCameraCapture = async () => {
     try {
-      // Request access to the camera
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // First try to get the rear-facing camera
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { exact: "environment" }, // Strict requirement for rear camera
+          },
+        });
 
-      // Ensure the `video` element is ready
-      setShowCamera(true); // Trigger the rendering of the `video` element
+        await initializeCamera(stream);
+        return; // Exit if rear camera is successfully initialized
+      } catch (rearCameraError) {
+        console.log("Rear camera not available, trying fallback options...");
+      }
 
-      // Wait for the DOM to update
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // If rear camera fails, try any available camera
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true, // This will use any available camera
+        });
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream; // Set the stream
-        videoRef.current.play(); // Start video playback
-        setError(null);
-      } else {
-        setError("Camera element not available. Please try again.");
+        await initializeCamera(stream);
+      } catch (fallbackError) {
+        throw new Error("No cameras are available on this device.");
       }
     } catch (err) {
       console.error("Error accessing camera:", err);
