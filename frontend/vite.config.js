@@ -8,5 +8,5 @@ export default defineConfig({
     host: true, // This enables listening on all addresses
     port: 5173, // Default Vite port, change if needed
   },
-  base: "/idea-meal-pod/",
+  base: "/meal-idea-pod/",
 });
