@@ -7,7 +7,7 @@ import Navbar from "./components/Navbar.jsx";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/idea-meal-pod">
       <Navbar />
       <div>
         <Routes>
