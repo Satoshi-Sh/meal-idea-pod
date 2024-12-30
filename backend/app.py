@@ -87,6 +87,11 @@ async def get_ingredients_from_image():
     else:
         return jsonify({'error': 'File type not allowed'}), 400
 
+
+@app.route('/api/test', methods=['get'])
+def test_endpoint():
+    return jsonify({"message": "All good now"}), 200
+
 @app.errorhandler(413)
 def request_entity_too_large(error):
     return jsonify({'error': 'File is too large. Maximum size allowed is 5 MB.'}), 413
