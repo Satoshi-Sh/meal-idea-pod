@@ -144,7 +144,6 @@ const ImageUploader = ({ setFoodItems }) => {
         return;
       }
       setCapturedItems(ingredientsArray);
-      setOpen(true);
 
       // Handle successful response (e.g., show success message, redirect, etc.)
       setError(null);
@@ -182,6 +181,7 @@ const ImageUploader = ({ setFoodItems }) => {
           initialItems={capturedItems}
           setFoodItems={setFoodItems}
           setCapturedItems={setCapturedItems}
+          setOpen={setOpen}
         />
       ) : (
         <div className="flex flex-col items-center space-y-4 m-6 rounded-lg">

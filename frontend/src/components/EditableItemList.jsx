@@ -12,7 +12,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 
-const EditableItemList = ({ setFoodItems, initialItems, setCapturedItems }) => {
+const EditableItemList = ({
+  setFoodItems,
+  initialItems,
+  setCapturedItems,
+  setOpen,
+}) => {
   const [items, setItems] = useState(initialItems);
   const [editingId, setEditingId] = useState(null);
 
@@ -49,6 +54,7 @@ const EditableItemList = ({ setFoodItems, initialItems, setCapturedItems }) => {
       const updatedItems = [...prevItems, ...items];
       return updatedItems.sort((a, b) => a[1].localeCompare(b[1]));
     });
+    setOpen(true);
     setItems([]);
     setCapturedItems([]);
   };
