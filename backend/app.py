@@ -88,7 +88,7 @@ async def get_ingredients_from_image():
         return jsonify({'error': 'File type not allowed'}), 400
 
 
-@app.route('/api/test', methods=['get'])
+@app.route('/api/test', methods=['GET'])
 def test_endpoint():
     return jsonify({"message": "All good now"}), 200
 
