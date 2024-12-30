@@ -8,6 +8,7 @@ import base64
 load_dotenv()
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Limit uploads to 5 MB
 CORS(app, resources={r"/api/*": {"origins": frontend_url}})
 
 # Configure allowed extensions
@@ -86,6 +87,9 @@ async def get_ingredients_from_image():
     else:
         return jsonify({'error': 'File type not allowed'}), 400
 
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return jsonify({'error': 'File is too large. Maximum size allowed is 5 MB.'}), 413
 
 
 
