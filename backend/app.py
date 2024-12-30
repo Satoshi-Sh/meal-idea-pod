@@ -9,7 +9,7 @@ load_dotenv()
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Limit uploads to 5 MB
-CORS(app, resources={r"/api/*": {"origins": frontend_url}})
+CORS(app, resources={r"/api/*": {"origins": [frontend_url]}})
 
 # Configure allowed extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
