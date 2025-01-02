@@ -18,6 +18,6 @@ This project is a simple implementation of a meal suggestion system from food li
 ## Run Backend
 
 1. `cd backend`
-2. Set up the .env file according to the .sample_env
+2. Set up the .env file according to the .sample_env. You need to add your OPENAI_API_KEY.
 3. Install dependencies to your environment `pip install -r requirements.txt`
 4. `python app.py`
