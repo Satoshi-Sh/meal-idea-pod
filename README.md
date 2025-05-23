@@ -2,6 +2,8 @@
 
 This project is a simple implementation of a meal suggestion system from food list using a language model. The system store food items and suggest meal idea and provide a recipe by preference.
 
+[short demo](https://youtube.com/shorts/5o7Y263jqaM) 
+
 ## Key Features
 
 - Users can track food items to the app by typing and uploading receipt images.
